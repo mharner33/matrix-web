@@ -8,19 +8,26 @@ import (
 	"github.com/gorilla/mux"
 )
 
+const portNum = ":3000"
+
 var homeView *views.View
 var contactView *views.View
 
+//home is the handler function for the / route
 func home(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := homeView.Template.ExecuteTemplate(w, homeView.Layout, nil); err != nil {
-		panic(err)
-	}
+	must(homeView.Render(w, nil))
 }
 
+//contact is the handler function for the /contact route
 func contact(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
-	if err := contactView.Template.ExecuteTemplate(w, contactView.Layout, nil); err != nil {
+	must(contactView.Render(w, nil))
+}
+
+//Must - a helper function that panics on any error
+func must(err error) {
+	if err != nil {
 		panic(err)
 	}
 }
@@ -31,5 +38,5 @@ func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/", home)
 	r.HandleFunc("/contact", contact)
-	http.ListenAndServe(":3000", r)
+	http.ListenAndServe(portNum, r)
 }
